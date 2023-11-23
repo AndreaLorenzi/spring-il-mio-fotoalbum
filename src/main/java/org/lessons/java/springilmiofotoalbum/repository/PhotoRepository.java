@@ -3,5 +3,8 @@ package org.lessons.java.springilmiofotoalbum.repository;
 import org.lessons.java.springilmiofotoalbum.model.Photo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PhotoRepository extends JpaRepository<Photo, Long> {
+import java.util.List;
+
+public interface PhotoRepository extends JpaRepository<Photo, Integer> {
+    List<Photo> findByTitleContainingIgnoreCase(String titleKeyword);
 }

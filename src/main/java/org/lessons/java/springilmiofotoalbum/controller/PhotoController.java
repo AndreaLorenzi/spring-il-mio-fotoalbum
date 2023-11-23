@@ -39,7 +39,7 @@ public class PhotoController {
         try {
             Photo photo = photoService.getPhotoById(id);
             model.addAttribute("photo", photo);
-            return "photo/show";
+            return "photos/show";
         } catch (PhotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -49,7 +49,7 @@ public class PhotoController {
     public String create(Model model) {
         model.addAttribute("photo", new Photo());
         model.addAttribute("categoryList", categoryService.getAll());
-        return "photo/form";
+        return "photos/form";
     }
 
     @PostMapping("/create")
@@ -71,7 +71,7 @@ public class PhotoController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         try {
-            model.addAttribute("pizza", photoService.getPhotoById(id));
+            model.addAttribute("photo", photoService.getPhotoById(id));
             model.addAttribute("categoryList", categoryService.getAll());
             return "/photos/form";
         } catch (PhotoNotFoundException e) {
@@ -90,7 +90,7 @@ public class PhotoController {
         }
         try {
             Photo savedPhoto = photoService.editPhoto(formPhoto);
-            return "redirect:/pizzas/show/" + savedPhoto.getId();
+            return "redirect:/photos/show/" + savedPhoto.getId();
         } catch (PhotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

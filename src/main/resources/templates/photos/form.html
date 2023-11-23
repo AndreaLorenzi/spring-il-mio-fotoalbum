@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="isEdit=${photo.id != null}">
+<head
+        th:insert="fragments/resources :: headResources(${isEdit ? 'Edit Photo' : 'Create Photo'})"></head>
+<body>
+<nav th:replace="fragments/navbar :: topNavbar('Photos')"></nav>
+<div class="container">
+    <h1 th:text="${isEdit ? 'Edit Photo' : 'Create Photo'}"></h1>
+    <hr>
+    <!-- form di creazione della foto -->
+    <form
+            th:with="actionUrl=${isEdit ? '/photos/edit/'+photo.id : '/photos/create'}"
+            id="photo-create"
+            method="POST"
+            th:action="@{${actionUrl}}"
+            th:object="${photo}"
+            class="row gy-2"
+    >
+        <!-- title -->
+        <div class="col-4"
+             th:insert="fragments/components :: formField('text', 'Title', 'title')"></div>
+
+        <!-- img -->
+        <div class="col-4"
+             th:insert="fragments/components :: formField('text', 'Url', 'url')">
+        </div>
+
+        <div class="col-4" th:insert="fragments/components :: formField('text', 'Description', 'description')">
+
+        </div>
+        <!-- visible -->
+        <div class="col-12">
+            <span>yes</span>
+            <input type="radio" value="true" name="visible"/>
+            <span>no</span>
+            <input type="radio" value="false" name="visible"/>
+        </div>
+        <!-- actions -->
+        <img th:src="*{Url}" alt="">
+        <div class="col-12">
+            <button class="btn btn-secondary" type="submit">Save</button>
+            <a th:href="@{/photos}" class="btn btn-secondary">Cancel</a>
+        </div>
+        <div class="col-4">
+            <!--categories -->
+            <h3>Ingredient</h3>
+            <div class="form-check" th:each="cat : ${categoryList}">
+                <input
+                        class="form-check-input"
+                        type="checkbox"
+                        th:value="${cat.id}"
+                        th:id="|cat_${cat.id}|"
+                        th:field="*{categories}">
+                <label class="form-check-label" th:for="|cat_${cat.id}|" th:text="${cat.name}">
+                </label>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+</body>
+</html>

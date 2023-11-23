@@ -1,6 +1,8 @@
 package org.lessons.java.springilmiofotoalbum.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +12,9 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    @Size(max = 50)
     private String name;
 
     @ManyToMany(mappedBy = "categories")

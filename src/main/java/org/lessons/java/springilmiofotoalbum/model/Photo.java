@@ -3,9 +3,12 @@ package org.lessons.java.springilmiofotoalbum.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Cascade;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @Table(name = "photos")
@@ -23,12 +26,9 @@ public class Photo {
     @Size(max = 255, message = "lenght must be less than 255")
     private String url;
     private boolean visible;
-
+    //PERSIST,MERGE, REFRESH, DETACH
     @ManyToMany
-    @JoinTable(name = "photo_category",
-            joinColumns = @JoinColumn(name = "photo_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories = new HashSet<>();
+    private Set<Category> categories;
 
     public Set<Category> getCategories() {
         return categories;

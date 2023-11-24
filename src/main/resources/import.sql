@@ -21,11 +21,11 @@ INSERT INTO categories(name)VALUES('Alimenti');
 INSERT INTO categories(name)VALUES('Arte');
 
 
-INSERT INTO photo_category(photo_id, category_id)VALUES(1,1)
-INSERT INTO photo_category(photo_id, category_id)VALUES(2,1)
-INSERT INTO photo_category(photo_id, category_id)VALUES(3,1)
-INSERT INTO photo_category(photo_id, category_id)VALUES(4,1)
-INSERT INTO photo_category(photo_id, category_id)VALUES(5,2)
-INSERT INTO photo_category(photo_id, category_id)VALUES(6,2)
-INSERT INTO photo_category(photo_id, category_id)VALUES(7,2)
-INSERT INTO photo_category(photo_id, category_id)VALUES(8,4)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(1,1)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(2,1)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(3,1)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(4,1)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(5,2)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(6,2)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(7,2)
+INSERT INTO photos_categories (photo_id, categories_id)VALUES(8,4)

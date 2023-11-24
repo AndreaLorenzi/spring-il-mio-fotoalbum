@@ -73,5 +73,4 @@ public class PhotoService {
         return photoRepository.findAll(pageable);
     }
 
-
 }

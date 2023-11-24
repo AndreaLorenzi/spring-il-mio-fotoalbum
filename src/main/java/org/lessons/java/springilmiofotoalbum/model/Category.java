@@ -1,5 +1,6 @@
 package org.lessons.java.springilmiofotoalbum.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -20,6 +21,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
     private List<Photo> photos;
 
     public List<Photo> getPhotos() {

@@ -3,12 +3,9 @@ package org.lessons.java.springilmiofotoalbum.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.Cascade;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @Table(name = "photos")
@@ -28,13 +25,14 @@ public class Photo {
     private boolean visible;
     //PERSIST,MERGE, REFRESH, DETACH
     @ManyToMany
-    private Set<Category> categories;
+    private List<Category> categories;
 
-    public Set<Category> getCategories() {
+
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 

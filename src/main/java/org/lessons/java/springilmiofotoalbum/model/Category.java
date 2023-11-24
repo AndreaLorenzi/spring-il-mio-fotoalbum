@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,6 +19,16 @@ public class Category {
     @Size(max = 50)
     private String name;
 
+    @ManyToMany(mappedBy = "categories")
+    private List<Photo> photos;
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
 
     public Integer getId() {
         return id;

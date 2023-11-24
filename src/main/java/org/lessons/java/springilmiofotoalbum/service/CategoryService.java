@@ -8,6 +8,7 @@ import org.lessons.java.springilmiofotoalbum.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,16 @@ public class CategoryService {
     }
 
     public void deleteCategory(Category category, Integer id) throws RuntimeException {
+        Category deleteCategory = getCategoryById(id);
+        List<Photo> photos = deleteCategory.getPhotos();
+        if (photos.size() > 0) {
+            for (Photo photo : photos) {
+                List<Category> categories = photo.getCategories();
+                categories.remove(deleteCategory);
+            }
+            deleteCategory.setPhotos(new ArrayList<>());
+        }
+        categoryRepository.deleteById(id);
         for (Photo photo : photoRepository.findAll()) {
             if (photo.getCategories().contains(category)) {
                 photo.getCategories().remove(category);

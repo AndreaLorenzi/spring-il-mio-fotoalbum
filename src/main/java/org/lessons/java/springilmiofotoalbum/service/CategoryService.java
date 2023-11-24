@@ -2,7 +2,9 @@ package org.lessons.java.springilmiofotoalbum.service;
 
 import org.lessons.java.springilmiofotoalbum.exceptions.CategoryNameUniqueException;
 import org.lessons.java.springilmiofotoalbum.model.Category;
+import org.lessons.java.springilmiofotoalbum.model.Photo;
 import org.lessons.java.springilmiofotoalbum.repository.CategoryRepository;
+import org.lessons.java.springilmiofotoalbum.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private PhotoRepository photoRepository;
 
     public List<Category> getAll() {
         return categoryRepository.findByOrderByName();
@@ -38,7 +43,15 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public void deleteCategory(Integer id) {
+    public void deleteCategory(Category category, Integer id) throws RuntimeException {
+        for (Photo photo : photoRepository.findAll()) {
+            if (photo.getCategories().contains(category)) {
+                photo.getCategories().remove(category);
+                photoRepository.save(photo);
+            }
+        }
+
+
         categoryRepository.deleteById(id);
     }
 }

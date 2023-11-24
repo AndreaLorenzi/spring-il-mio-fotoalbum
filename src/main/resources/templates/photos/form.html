@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="isEdit=${photo.id != null}">
 <head
         th:insert="fragments/resources :: headResources(${isEdit ? 'Edit Photo' : 'Create Photo'})"></head>
-<body>
+<body class="bg-dark">
 <nav th:replace="fragments/navbar :: topNavbar('Photos')"></nav>
 <div class="container">
-    <h1 th:text="${isEdit ? 'Edit Photo' : 'Create Photo'}"></h1>
+    <h1 class="text-light" th:text="${isEdit ? 'Edit Photo' : 'Create Photo'}"></h1>
     <hr>
     <!-- form di creazione della foto -->
     <form
@@ -14,44 +14,46 @@
             method="POST"
             th:action="@{${actionUrl}}"
             th:object="${photo}"
-            class="row gy-2"
+            class="row gy-2 text-light"
     >
         <!-- title -->
-        <div class="col-4"
+        <div class="col-4 text-light"
              th:insert="fragments/components :: formField('text', 'Title', 'title')"></div>
 
         <!-- img -->
-        <div class="col-4"
+        <div class="col-4 text-light"
              th:insert="fragments/components :: formField('text', 'Url', 'url')">
         </div>
 
-        <div class="col-4" th:insert="fragments/components :: formField('text', 'Description', 'description')">
+        <div class="col-4 text-light"
+             th:insert="fragments/components :: formField('text', 'Description', 'description')">
 
         </div>
         <!-- visible -->
-        <div class="col-12">
-            <span>yes</span>
-            <input type="radio" value="true" name="visible"/>
-            <span>no</span>
-            <input type="radio" value="false" name="visible"/>
+        <div class="col-2">
+            <label for="description" class="form-label text-light">Visibility</label>
+            <div class="form-check mt-2">
+                <input type="checkbox" class="form-check-input text-light" id="visible" th:field="*{visible}">
+                <label class="form-check-label" for="visible">Visible/NotVisible</label>
+            </div>
         </div>
         <!-- actions -->
         <img th:src="*{Url}" alt="">
         <div class="col-12">
             <button class="btn btn-secondary" type="submit">Save</button>
-            <a th:href="@{/photos}" class="btn btn-secondary">Cancel</a>
+            <a th:href="@{/photos}" class="btn btn-secondary text-light">Cancel</a>
         </div>
         <div class="col-4">
             <!--categories -->
-            <h3>Ingredient</h3>
+            <h3 class="text-light">Categories</h3>
             <div class="form-check" th:each="cat : ${categoryList}">
                 <input
-                        class="form-check-input"
+                        class="form-check-input text-light"
                         type="checkbox"
                         th:value="${cat.id}"
                         th:id="|cat_${cat.id}|"
                         th:field="*{categories}">
-                <label class="form-check-label" th:for="|cat_${cat.id}|" th:text="${cat.name}">
+                <label class="form-check-label text-light" th:for="|cat_${cat.id}|" th:text="${cat.name}">
                 </label>
             </div>
         </div>

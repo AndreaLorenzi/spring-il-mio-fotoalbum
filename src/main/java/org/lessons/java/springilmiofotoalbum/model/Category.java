@@ -18,8 +18,6 @@ public class Category {
     @Size(max = 50)
     private String name;
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<Photo> photos = new HashSet<>();
 
     public Integer getId() {
         return id;

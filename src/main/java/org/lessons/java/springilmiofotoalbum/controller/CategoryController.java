@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryController {
     @Autowired
     CategoryService categoryService;
@@ -23,14 +23,14 @@ public class CategoryController {
     public String index(Model model) {
         model.addAttribute("categoryList", categoryService.getAll());
         model.addAttribute("categoryObj", new Category());
-        return "categories/index";
+        return "categories/list";
     }
 
     @PostMapping
     public String doSave(@Valid @ModelAttribute("categoryObj") Category formCategory, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categoryList", categoryService.getAll());
-            return "categories/index";
+            return "categories/list";
         }
         try {
             categoryService.save(formCategory);
@@ -43,9 +43,9 @@ public class CategoryController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
-            Category categoryToDelete = categoryService.getCategoryById(id);
-            categoryService.deleteCategory(id);
-            redirectAttributes.addFlashAttribute("message", "The " + categoryToDelete.getName() + " deleted!");
+            Category deleteCategory = categoryService.getCategoryById(id);
+            categoryService.deleteCategory(deleteCategory, id);
+            redirectAttributes.addFlashAttribute("message", "The " + deleteCategory.getName() + " deleted!");
             return "redirect:/categories";
         } catch (CategoryNameUniqueException e) {
             // Gestire l'errore appropriatamente, ad esempio reindirizzando a una pagina di errore

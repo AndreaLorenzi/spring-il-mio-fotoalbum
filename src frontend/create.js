@@ -1,35 +1,27 @@
-document
-.getElementById("photo-create")
-.addEventListener("submit", async function (event) {
-event.preventDefault();
+const apiMessages = "http://localhost:8080/api/contacts";
 
-try {
-    // Ottenere i dati del modulo
-    var formData = new FormData(event.target);
+ // funzione per creare un nuovo messaggio
 
-    // Effettuare la richiesta API
-    const response = await fetch("http://localhost:8080/api/photos", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-        name: formData.get("title"),
-        url: formData.get("url"),
-        description: formData.get("description"),
-    }),
-    });
+ document
+   .getElementById("messageForm")
+   .addEventListener("submit", async function (event) {
+     event.preventDefault();
+     const email = document.getElementById("email").value;
+     const message = document.getElementById("message").value;
+     try {
+       await axios.post(apiMessages, {
+         email,
+         message,
+       });
 
-    if (!response.ok) {
-    throw new Error("Failed to create photo");
-    }
+       // Imposta il messaggio di successo nell'HTML
+       successMessage.style.display = "block";
+       this.style.display = "none";
 
-    const data = await response.json();
-    console.log("Photo created successfully:", data);
-
-    // Ridireziona alla pagina principale
-    window.location.href = "/";
-} catch (error) {
-    console.error("An unexpected error occurred:", error);
-}
-});
+       setTimeout(() => {
+         window.location.href = "contact.html";
+       }, 3000);
+     } catch (error) {
+       console.error(error);
+     }
+   });

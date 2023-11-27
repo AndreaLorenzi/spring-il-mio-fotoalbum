@@ -2,12 +2,17 @@ package org.lessons.java.springilmiofotoalbum.controller;
 
 import jakarta.validation.Valid;
 import org.lessons.java.springilmiofotoalbum.exceptions.PhotoNotFoundException;
+import org.lessons.java.springilmiofotoalbum.exceptions.PhotoTitleUniqueException;
+import org.lessons.java.springilmiofotoalbum.model.Category;
 import org.lessons.java.springilmiofotoalbum.model.Photo;
+import org.lessons.java.springilmiofotoalbum.repository.CategoryRepository;
 import org.lessons.java.springilmiofotoalbum.repository.PhotoRepository;
+import org.lessons.java.springilmiofotoalbum.security.DatabaseUserDetails;
 import org.lessons.java.springilmiofotoalbum.service.CategoryService;
 import org.lessons.java.springilmiofotoalbum.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -25,15 +31,20 @@ public class PhotoController {
     private PhotoService photoService;
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
 
     @GetMapping
-    public String index(@RequestParam Optional<String> search, Model model) {
+    public String index(@RequestParam Optional<String> search, Model model, Authentication authentication) {
+
+
+        DatabaseUserDetails user = (DatabaseUserDetails) authentication.getPrincipal();
+        System.out.println(user.getUsername());
+        System.out.println(user.getAuthorities());
+
         model.addAttribute("photoList", photoService.getPhotoList(search));
-        return "photos/home";
+        return "/photos/home";
     }
 
-    // metodo che mostra i dettagli delle photo prese per id
     @GetMapping("/show/{id}")
     public String show(@PathVariable Integer id, Model model) {
         try {
@@ -48,23 +59,33 @@ public class PhotoController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("photo", new Photo());
-        model.addAttribute("categoryList", categoryService.getAll());
-        return "photos/form";
+
+        List<Category> categoryList = categoryRepository.findByOrderByName();
+        model.addAttribute("categoryList", categoryList);
+        return "/photos/form";
+
     }
 
     @PostMapping("/create")
-    public String doCreate(@Valid @ModelAttribute("photo") Photo formPhoto, BindingResult bindingResult, Model model) {
+    public String store(@Valid @ModelAttribute("photo") Photo formPhoto,
+                        BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            // ci sono errori, devo ricaricare il form
-            model.addAttribute("categoryList", categoryService.getAll());
-            return "photos/form";
+
+            List<Category> categoryList = categoryRepository.findByOrderByName();
+            model.addAttribute("categoryList", categoryList);
+
+            return "/photos/form";
         }
         try {
             Photo savedPhoto = photoService.createPhoto(formPhoto);
             return "redirect:/photos/show/" + savedPhoto.getId();
-        } catch (RuntimeException e) {
-            bindingResult.addError(new FieldError("photo", "name", e.getMessage(), false, null, null, "Name must be unique"));
-            return "photos/form";
+        } catch (PhotoTitleUniqueException e) {
+            bindingResult.addError(new FieldError("photo", "title", e.getMessage(),
+                    false, null, null, "This Photo already exist"));
+
+            List<Category> categoryList = categoryRepository.findByOrderByName();
+            model.addAttribute("categoryList", categoryList);
+            return "/photos/form";
         }
     }
 
@@ -72,20 +93,23 @@ public class PhotoController {
     public String edit(@PathVariable Integer id, Model model) {
         try {
             model.addAttribute("photo", photoService.getPhotoById(id));
-            model.addAttribute("categoryList", categoryService.getAll());
+
+            List<Category> categoryList = categoryRepository.findByOrderByName();
+            model.addAttribute("categoryList", categoryList);
+
             return "/photos/form";
         } catch (PhotoNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "photo with id " + id + " not found");
         }
     }
 
     @PostMapping("/edit/{id}")
-    public String doEdit(@PathVariable Integer id, @Valid @ModelAttribute("photo") Photo formPhoto,
+    public String update(@PathVariable Integer id,
+                         @Valid @ModelAttribute("photo") Photo formPhoto,
                          BindingResult bindingResult, Model model) {
-        // valido il libro
         if (bindingResult.hasErrors()) {
-            // se ci sono errori ricarico la pagina col form
-            model.addAttribute("ingredientList", categoryService.getAll());
+            List<Category> categoryList = categoryRepository.findByOrderByName();
+            model.addAttribute("categoryList", categoryList);
             return "/photos/form";
         }
         try {
@@ -96,12 +120,16 @@ public class PhotoController {
         }
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
             Photo photoToDelete = photoService.getPhotoById(id);
             photoService.deletePhoto(id);
-            redirectAttributes.addFlashAttribute("message", "The " + photoToDelete.getTitle() + " deleted!");
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    photoToDelete.getTitle()
+                            + " deleted!"
+            );
             return "redirect:/photos";
         } catch (PhotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

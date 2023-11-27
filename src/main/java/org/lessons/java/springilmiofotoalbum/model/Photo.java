@@ -22,7 +22,7 @@ public class Photo {
     @NotBlank(message = "imageUrl must be not blank")
     @Size(max = 255, message = "lenght must be less than 255")
     private String url;
-    private boolean visible;
+    private boolean visible = false;
     //PERSIST,MERGE, REFRESH, DETACH
     @ManyToMany
     private List<Category> categories;

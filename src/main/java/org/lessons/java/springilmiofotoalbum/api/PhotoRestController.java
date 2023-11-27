@@ -3,6 +3,7 @@ package org.lessons.java.springilmiofotoalbum.api;
 import jakarta.validation.Valid;
 import org.lessons.java.springilmiofotoalbum.exceptions.PhotoNotFoundException;
 import org.lessons.java.springilmiofotoalbum.model.Photo;
+import org.lessons.java.springilmiofotoalbum.service.ContactService;
 import org.lessons.java.springilmiofotoalbum.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,13 +21,15 @@ import java.util.Optional;
 @RequestMapping("/api/photos")
 @CrossOrigin
 public class PhotoRestController {
-
     @Autowired
     private PhotoService photoService;
 
+    @Autowired
+    private ContactService contactService;
+
     @GetMapping
     public List<Photo> index(@RequestParam Optional<String> search) {
-        return photoService.getPhotoList(search);
+        return photoService.getPhotoVisibility(search);
     }
 
     @GetMapping("/{id}")
@@ -71,7 +74,6 @@ public class PhotoRestController {
     public Page<Photo> pagedIndex(
             @RequestParam(name = "size", defaultValue = "2") Integer size,
             @RequestParam(name = "page", defaultValue = "0") Integer page) {
-
         return photoService.getPage(PageRequest.of(page, size));
     }
 
